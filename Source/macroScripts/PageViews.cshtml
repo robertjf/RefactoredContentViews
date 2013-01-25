@@ -1,0 +1,8 @@
+﻿@inherits umbraco.MacroEngines.DynamicNodeContext
+@using umbraco.MacroEngines;
+@using umbraco.NodeFactory;
+@using Refactored.UmbracoViewCounter;
+
+<span># Views:@ViewCount.GetViewCount(@Model.Id, category: @Parameter.Category, increment: @Parameter.Increment == "1").ToString("N0")</span>
+
+

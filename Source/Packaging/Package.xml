@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<umbPackage>
+  <files>
+    <file>
+      <guid>PageViews.cshtml</guid>
+      <orgPath>/macroScripts</orgPath>
+      <orgName>PageViews.cshtml</orgName>
+    </file>
+    <file>
+      <guid>Refactored.UmbracoExtensions.dll</guid>
+      <orgPath>/bin</orgPath>
+      <orgName>Refactored.UmbracoExtensions.dll</orgName>
+    </file>
+    <file>
+      <guid>Refactored.UmbracoViewCounter.dll</guid>
+      <orgPath>/bin</orgPath>
+      <orgName>Refactored.UmbracoViewCounter.dll</orgName>
+    </file>
+    <file>
+      <guid>PackageActionsContrib.dll</guid>
+      <orgPath>/bin</orgPath>
+      <orgName>PackageActionsContrib.dll</orgName>
+    </file>
+  </files>
+  <info>
+    <package>
+      <name>Refactored Content Views</name>
+      <version>0.2</version>
+      <license url="http://www.opensource.org/licenses/mit-license.php">MIT license</license>
+      <url>http://refactored.com.au</url>
+      <requirements>
+        <major>3</major>
+        <minor>0</minor>
+        <patch>0</patch>
+      </requirements>
+    </package>
+    <author>
+      <name>Robert Foster</name>
+      <website>http://refactored.com.au/blog</website>
+    </author>
+    <readme>
+      <![CDATA[Provides functionality to count the number of times content has been viewed in a webpage.  
+
+Can be configured with different categories so that multiple views can be applied to the same document type.
+
+]]>
+    </readme>
+  </info>
+  <DocumentTypes />
+  <Templates />
+  <Stylesheets />
+  <Macros>
+    <macro>
+      <name>Page Views</name>
+      <alias>PageViews</alias>
+      <scriptType>
+      </scriptType>
+      <scriptAssembly>
+      </scriptAssembly>
+      <xslt>
+      </xslt>
+      <useInEditor>False</useInEditor>
+      <refreshRate>0</refreshRate>
+      <scriptingFile>PageViews.cshtml</scriptingFile>
+      <properties>
+        <property name="Increment" alias="Increment" show="True" propertyType="bool" />
+        <property name="Category" alias="Category" show="True" propertyType="text" />
+      </properties>
+    </macro>
+  </Macros>
+  <DictionaryItems />
+  <Languages />
+  <DataTypes />
+  <Actions>
+    <Action runat="install" undo="false" alias="ExecuteSql">
+      <![CDATA[
+CREATE TABLE [refViewCount](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[nodeId] [int] NOT NULL,
+	[count] [int] NOT NULL,
+	[lastViewed] [datetime] NOT NULL,
+	[category] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_refViewCount] PRIMARY KEY CLUSTERED ( [id] ASC ))
+]]>
+    </Action>
+    <Action runat="install" undo="false" alias="ExecuteSql">
+      <![CDATA[
+CREATE TABLE [refViewCountHistory](
+	[counterId] [int] NOT NULL,
+	[updated] [datetime] NOT NULL,
+	[reset] [bit] NOT NULL)
+]]>
+    </Action>
+    <Action runat="install" undo="false" alias="ExecuteSql">
+      <![CDATA[
+ALTER TABLE [refViewCountHistory]  WITH CHECK ADD  CONSTRAINT [FK_refViewCountHistory_refViewCount] FOREIGN KEY([counterId])
+REFERENCES [refViewCount] ([id])
+ON DELETE CASCADE
+]]>
+    </Action>
+    <Action runat="install" undo="false" alias="ExecuteSql">
+      <![CDATA[ALTER TABLE [refViewCountHistory] CHECK CONSTRAINT [FK_refViewCountHistory_refViewCount]]]>
+    </Action>
+    <Action runat="install" undo="false" alias="ExecuteSql">
+      <![CDATA[
+CREATE TABLE [refViewCountConfig](
+	[nodeId] [int] NOT NULL,
+	[category] [nvarchar](100) NULL,
+	[hideCounter] [bit] NOT NULL,
+	[enableHistory] [bit] NOT NULL
+)
+]]>
+    </Action>
+
+    <Action runat="uninstall" undo="false" alias="ExecuteSql">
+      <![CDATA[DROP TABLE [refViewCountHistory]]]>
+    </Action>
+    <Action runat="uninstall" undo="false" alias="ExecuteSql">
+      <![CDATA[DROP TABLE [refViewCount]]]>
+    </Action>
+    <Action runat="uninstall" undo="false" alias="ExecuteSql">
+      <![CDATA[DROP TABLE [refViewCountConfig]]]>
+    </Action>
+  </Actions>
+</umbPackage>
