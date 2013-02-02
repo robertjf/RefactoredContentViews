@@ -7,6 +7,7 @@ using System.Xml.XPath;
 using umbraco.BusinessLogic;
 using umbraco.DataLayer;
 using umbraco;
+using Umbraco.Core;
 
 namespace Refactored.UmbracoViewCounter
 {
@@ -203,32 +204,10 @@ values (@nodeId, @category, @hideCounter, @enableHistory)",
         /// Gets the View Count Data for the specified Node Id for consumption by XSLT
         /// </summary>
         /// <param name="nodeId">Content Node Id</param>
-        /// <returns>XPathNodeIterator containing View Count and configuration</returns>
-        public static XPathNodeIterator GetViews(int nodeId)
-        {
-            return GetViews(nodeId, string.Empty, false);
-        }
-
-
-        /// <summary>
-        /// Gets the View Count Data for the specified Node Id for consumption by XSLT
-        /// </summary>
-        /// <param name="nodeId">Content Node Id</param>
-        /// <param name="category">Category.  </param>
-        /// <returns>XPathNodeIterator containing View Count and configuration</returns>
-        public static XPathNodeIterator GetViews(int nodeId, string category)
-        {
-            return GetViews(nodeId, category, false);
-        }
-
-        /// <summary>
-        /// Gets the View Count Data for the specified Node Id for consumption by XSLT
-        /// </summary>
-        /// <param name="nodeId">Content Node Id</param>
         /// <param name="category">Category.</param>
         /// <param name="increment">View Count information is updated if this is true after retrieving the current count.</param>
         /// <returns>XPathNodeIterator containing View Count and configuration</returns>
-        public static XPathNodeIterator GetViews(int nodeId, string category, bool increment)
+        public static XPathNodeIterator GetViews(int nodeId, string category = "", bool increment = false)
         {
             XmlDocument xd = new XmlDocument();
             XmlNode pv = xd.CreateElement("pageViews");
@@ -242,22 +221,22 @@ values (@nodeId, @category, @hideCounter, @enableHistory)",
 
             if (rr.Read())
             {
-                v.Attributes.Append(umbraco.xmlHelper.addAttribute(xd, "nodeId", nodeId.ToString()));
-                v.Attributes.Append(umbraco.xmlHelper.addAttribute(xd, "category", category));
-                v.Attributes.Append(umbraco.xmlHelper.addAttribute(xd, "count", rr.IsNull("count") ? "0" : rr.GetInt("count").ToString()));
-                v.Attributes.Append(umbraco.xmlHelper.addAttribute(xd, "lastViewed", rr.IsNull("lastViewed") ? "" : rr.GetDateTime("lastViewed").ToString("s")));
-                v.Attributes.Append(umbraco.xmlHelper.addAttribute(xd, "hideCounter", CounterHidden(nodeId, category) ? "1" : "0"));
-                v.Attributes.Append(umbraco.xmlHelper.addAttribute(xd, "enableHistory", HistoryEnabled(nodeId, category) ? "1" : "0"));
+                v.Attributes.Append(XmlHelper.AddAttribute(xd, "nodeId", nodeId.ToString()));
+                v.Attributes.Append(XmlHelper.AddAttribute(xd, "category", category));
+                v.Attributes.Append(XmlHelper.AddAttribute(xd, "count", rr.IsNull("count") ? "0" : rr.GetInt("count").ToString()));
+                v.Attributes.Append(XmlHelper.AddAttribute(xd, "lastViewed", rr.IsNull("lastViewed") ? "" : rr.GetDateTime("lastViewed").ToString("s")));
+                v.Attributes.Append(XmlHelper.AddAttribute(xd, "hideCounter", CounterHidden(nodeId, category) ? "1" : "0"));
+                v.Attributes.Append(XmlHelper.AddAttribute(xd, "enableHistory", HistoryEnabled(nodeId, category) ? "1" : "0"));
 
             }
             else
             {
-                v.Attributes.Append(umbraco.xmlHelper.addAttribute(xd, "nodeId", nodeId.ToString()));
-                v.Attributes.Append(umbraco.xmlHelper.addAttribute(xd, "category", category));
-                v.Attributes.Append(umbraco.xmlHelper.addAttribute(xd, "count", "0"));
-                v.Attributes.Append(umbraco.xmlHelper.addAttribute(xd, "lastViewed", string.Empty));
-                v.Attributes.Append(umbraco.xmlHelper.addAttribute(xd, "hideCounter", CounterHidden(nodeId, category) ? "1" : "0"));
-                v.Attributes.Append(umbraco.xmlHelper.addAttribute(xd, "enableHistory", HistoryEnabled(nodeId, category) ? "1" : "0"));
+                v.Attributes.Append(XmlHelper.AddAttribute(xd, "nodeId", nodeId.ToString()));
+                v.Attributes.Append(XmlHelper.AddAttribute(xd, "category", category));
+                v.Attributes.Append(XmlHelper.AddAttribute(xd, "count", "0"));
+                v.Attributes.Append(XmlHelper.AddAttribute(xd, "lastViewed", string.Empty));
+                v.Attributes.Append(XmlHelper.AddAttribute(xd, "hideCounter", CounterHidden(nodeId, category) ? "1" : "0"));
+                v.Attributes.Append(XmlHelper.AddAttribute(xd, "enableHistory", HistoryEnabled(nodeId, category) ? "1" : "0"));
 
             }
             rr.Close();
@@ -272,34 +251,13 @@ values (@nodeId, @category, @hideCounter, @enableHistory)",
         #endregion
 
         /// <summary>
-        /// Retrieves the default View Count value only, without incrementing the View Count
-        /// </summary>
-        /// <param name="nodeId">Content Node Id</param>
-        /// <returns>int containing the last Count</returns>
-        public static int GetViewCount(int nodeId)
-        {
-            return GetViewCount(nodeId, string.Empty);
-        }
-
-        /// <summary>
-        /// Retrieves the specified View Count value only, without incrementing the View Count
-        /// </summary>
-        /// <param name="nodeId">Content Node Id</param>
-        /// <param name="category">Category.</param>
-        /// <returns>int containing the last Count</returns>
-        public static int GetViewCount(int nodeId, string category)
-        {
-            return GetViewCount(nodeId, category, false);
-        }
-
-        /// <summary>
         /// Retrieves the View Count value only, while optionally incrementing the View Count
         /// </summary>
         /// <param name="nodeId">Content Node Id</param>
-        /// <param name="category">Category.</param>
+        /// <param name="category">Optional Category</param>
         /// <param name="increment">View Count information is updated first if this is true.</param>
         /// <returns>int containing the last Count</returns>
-        public static int GetViewCount(int nodeId, string category, bool increment)
+        public static int GetViewCount(int nodeId, string category = "", bool increment = false)
         {
             int viewCount = SqlHelper.ExecuteScalar<int>("select count from refViewCount where nodeId = @nodeId and category = @category",
                     SqlHelper.CreateParameter("@nodeId", nodeId),
@@ -316,22 +274,10 @@ values (@nodeId, @category, @hideCounter, @enableHistory)",
         /// </summary>
         /// <param name="date">Date </param>
         /// <param name="nodeId">Content Node Id</param>
-        /// <param name="category">Category.</param>
-        /// <returns>int containing the last Count</returns>
-        public static int GetViewCountSince(DateTime date, int nodeId, string category)
-        {
-            return GetViewCountSince(date, nodeId, category, false);
-        }
-
-        /// <summary>
-        /// Retrieves the View Count value only, while optionally incrementing the View Count
-        /// </summary>
-        /// <param name="date">Date </param>
-        /// <param name="nodeId">Content Node Id</param>
-        /// <param name="category">Category.</param>
+        /// <param name="category">Optional Category</param>
         /// <param name="increment">View Count information is updated first if this is true.</param>
         /// <returns>int containing the last Count</returns>
-        public static int GetViewCountSince(DateTime date, int nodeId, string category, bool increment)
+        public static int GetViewCountSince(DateTime date, int nodeId, string category = "", bool increment = false)
         {
             int viewCount = SqlHelper.ExecuteScalar<int>(@"SELECT count(refViewCountHistory.counterId)
 FROM refViewCount inner join refViewCountHistory on refViewCount.id = refViewCountHistory.counterId
@@ -348,23 +294,14 @@ and refViewCountHistory.updated >= @date",
             return viewCount;
         }
         #region View Count History
-        /// <summary>
-        /// Retrieves all history records for the specified content node and Default category
-        /// </summary>
-        /// <param name="nodeId">Content Node Id</param>
-        /// <returns>IEnumerable of ViewHistoryData containing view date and reset details</returns>
-        public static IEnumerable<ViewHistoryData> GetHistory(int nodeId)
-        {
-            return GetHistory(nodeId, string.Empty);
-        }
 
         /// <summary>
         /// Retrieves all history records for the specified content node and specified category
         /// </summary>
         /// <param name="nodeId">Content Node Id</param>
-        /// <param name="category">Category.</param>
+        /// <param name="category">Optional Category</param>
         /// <returns>IEnumerable of ViewHistoryData containing view date and reset details</returns>
-        public static IEnumerable<ViewHistoryData> GetHistory(int nodeId, string category)
+        public static IEnumerable<ViewHistoryData> GetHistory(int nodeId, string category = "")
         {
             var reader = SqlHelper.ExecuteReader("select * from refViewCount where counterId = @counterId",
                     SqlHelper.CreateParameter("@counterId", EnumerateCounterIds(nodeId, category)));
