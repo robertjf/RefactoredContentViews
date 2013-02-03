@@ -1,0 +1,26 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>Refactored.UmbracoViewCounter</title>
+    <authors>Robert Foster</authors>
+    <owners>R &amp; E Foster &amp; Associates Pty Ltd</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      <![CDATA[Provides functionality to count the number of times content has been viewed in a webpage.  
+
+Can be configured with different categories so that multiple views can be applied to the same document type.]]>
+    </description>
+    <summary>Provides a Content View Counter datatype for Umbraco</summary>
+    <copyright>Copyright 2012-2013 R &amp; E Foster &amp; Associates Pty Ltd</copyright>
+    <language />
+    <releaseNotes>
+      <![CDATA[Provides functionality to count the number of times content has been viewed in a webpage.  
+
+Can be configured with different categories so that multiple views can be applied to the same document type.]]>
+    </releaseNotes>
+    <iconUrl>http://apps.refactored.com.au/assets/Refactored_32.png</iconUrl>
+    <tags>Umbraco View Counter</tags>
+  </metadata>
+</package>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using umbraco.interfaces;
 using umbraco.presentation;
+using Refactored.Dynamics;
 
 namespace Refactored.UmbracoViewCounter.EditorControls
 {
