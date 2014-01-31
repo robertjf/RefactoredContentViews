@@ -109,8 +109,8 @@ set category = @newCategory, hideCounter = @hideCounter, enableHistory = @enable
 where category = @oldCategory",
                 SqlHelper.CreateParameter("@newCategory", _category.Text.Trim()),
                 SqlHelper.CreateParameter("@oldCategory", _prevalues["category"]),
-                SqlHelper.CreateParameter("@hideCounter", _prevalues["hideCounter"]),
-                SqlHelper.CreateParameter("@enableHistory", _prevalues["enableHistory"]));
+                SqlHelper.CreateParameter("@hideCounter", _prevalues["hideCounter"] == "1"),
+                SqlHelper.CreateParameter("@enableHistory", _prevalues["enableHistory"] == "1"));
 
             _prevalues = null;
 

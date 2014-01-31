@@ -70,9 +70,11 @@ namespace Refactored.UmbracoViewCounter.EditorControls
             if (!_disableReset)
             {
                 int tmpPageCount = 0;
-                if (int.TryParse(_pageCountH.Value, out tmpPageCount) && tmpPageCount == -1)
-                    // Reset the page view count to 0.
-                    ViewCount.Reset(_nodeId, _category);
+                if (_pageCountH != null) {
+                    if (int.TryParse(_pageCountH.Value, out tmpPageCount) && tmpPageCount == -1)
+                        // Reset the page view count to 0.
+                        ViewCount.Reset(_nodeId, _category);
+                }
             }
             _data.Value = DynamicDictionary.DynamicDictionaryToXML(DataNodeName, details).ToString();
 
